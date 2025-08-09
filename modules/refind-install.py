@@ -291,7 +291,7 @@ def copy_themes(value) -> str:
 
     shutil.copytree(value, dest_path)
 
-    return f'include "{os.path.join("themes", theme_name, "theme.conf")}"\n'
+    return f'include {os.path.join("themes", theme_name, "theme.conf")}\n'
 
 
 def copy_icons(value: list[tuple[str, str]]) -> str:
@@ -312,7 +312,7 @@ def copy_asset(name: str, path: str) -> str:
     extension = os.path.splitext(path)[1]
     shutil.copyfile(path, os.path.join(assets_dir, name + extension))
 
-    return f'{name} "{os.path.join("assets", name + extension)}"\n'
+    return f'{name} {os.path.join("assets", name + extension)}\n'
 
 
 def get_refind_config(config: dict[str, Any], profiles: Profiles) -> str:
