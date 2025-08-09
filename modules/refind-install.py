@@ -280,7 +280,9 @@ def copy_themes(value) -> str:
     if type(value) != str or not os.path.isdir(value):
         raise ValueError("theme must be a directory")
 
-    theme_name = os.path.basename(value.rstrip("/\\"))
+    theme_name = (
+        os.path.basename(value.rstrip("/\\")).split("-", 1)[1].replace(" ", "-")
+    )
 
     dest_path = os.path.join(refind_dir, "themes", theme_name)
 
