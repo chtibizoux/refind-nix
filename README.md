@@ -164,3 +164,7 @@ This flake provides a NixOS module for easily configuring and installing the rEF
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Acknowledgments
+
+This project was inspired by the work of [RossComputerGuy](https://github.com/RossComputerGuy/nixpkgs/tree/feat/refind/nixos/modules/system/boot/loader/refind) and [betaboon](https://gist.github.com/betaboon/97abed457de8be43f89e7ca49d33d58d).
