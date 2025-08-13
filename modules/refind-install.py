@@ -49,23 +49,38 @@ def get_kernel_uri(kernel_path: str, needSignature=True) -> str:
     if not os.path.exists(dirname):
         os.makedirs(dirname)
 
+    if not os.path.exists(dest_path):
+        shutil.copyfile(kernel_path, dest_path)
+
     if config["signWithLocalKeys"] and needSignature:
+        key = "/etc/refind.d/keys/refind_local.key"
+        cert = "/etc/refind.d/keys/refind_local.crt"
+
         result = subprocess.run(
             [
-                os.path.join(config["sbsignPath"], "bin", "sbsign"),
-                "--key",
-                "/etc/refind.d/keys/refind_local.key",
+                os.path.join(config["sbsignPath"], "bin", "sbverify"),
                 "--cert",
-                "/etc/refind.d/keys/refind_local.crt",
-                "--output",
+                cert,
                 dest_path,
-                kernel_path,
             ],
             universal_newlines=True,
         )
-        result.check_returncode()
-    elif not os.path.exists(dest_path):
-        shutil.copyfile(kernel_path, dest_path)
+
+        if result.returncode != 0:
+            result = subprocess.run(
+                [
+                    os.path.join(config["sbsignPath"], "bin", "sbsign"),
+                    "--key",
+                    key,
+                    "--cert",
+                    cert,
+                    "--output",
+                    dest_path,
+                    dest_path,
+                ],
+                universal_newlines=True,
+            )
+            result.check_returncode()
 
     return os.path.join(boot_kernel_dir, dest_file)
 
