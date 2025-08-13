@@ -64,6 +64,8 @@ def get_kernel_uri(kernel_path: str, needSignature=True) -> str:
                 dest_path,
             ],
             universal_newlines=True,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
         )
 
         if result.returncode != 0:
