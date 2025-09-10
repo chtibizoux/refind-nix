@@ -1283,32 +1283,19 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    assertions = [
-      {
-        assertion =
-          pkgs.stdenv.hostPlatform.isx86_64
-          || pkgs.stdenv.hostPlatform.isi686
-          || pkgs.stdenv.hostPlatform.isAarch64;
-        message = "rEFInd can only be installed on aarch64 & x86 platforms";
-      }
-    ];
-
     boot.loader.timeout = lib.mkDefault 20;
 
     boot.loader.grub.enable = lib.mkDefault false;
 
-    # Common attribute for boot loaders so only one of them can be
-    # set at once.
     system = {
-      boot.loader.id = "refind";
-      build.installBootLoader = pkgs.replaceVarsWith {
+      build.installBootLoader = lib.mkForce (pkgs.replaceVarsWith {
         src = ./refind-install.py;
         isExecutable = true;
         replacements = {
           python3 = pkgs.python3;
           configPath = refindInstallConfig;
         };
-      };
+      });
     };
   };
 }
