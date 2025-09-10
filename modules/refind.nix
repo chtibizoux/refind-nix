@@ -10,6 +10,7 @@ let
   refindInstallConfig = pkgs.writeText "refind-install.json" (
     builtins.toJSON {
       refindConfig = cfg.config;
+      extraConfig = cfg.extraConfig;
 
       nixPath = config.nix.package;
       refindPath = cfg.package;
@@ -39,7 +40,7 @@ let
       signWithLocalKeys = cfg.signWithLocalKeys;
       installDrivers = cfg.installDrivers;
       installation = cfg.installation;
-      tools = cfg.tools;
+      additionalFiles = cfg.additionalFiles;
     }
   );
   types = {
@@ -80,7 +81,6 @@ in
 {
   options = {
     boot.loader.refind = {
-      enable = lib.mkEnableOption "the rEFInd boot loader";
       config = lib.mkOption {
         type = types.nullOr (
           types.submodule {
@@ -1271,48 +1271,12 @@ in
           This flake will automaticaly sign the kernel if `signWithLocalKeys` is set.
         '';
       };
-      package = lib.mkPackageOption pkgs "refind" { };
-      maxGenerations = lib.mkOption {
-        default = null;
-        example = 50;
-        type = types.nullOr types.positiveInt;
-        description = ''
-          Maximum number of latest generations in the boot menu.
-          Useful to prevent boot partition of running out of disk space.
-          `null` means no limit i.e.
-        '';
-      };
       generateLinuxConf = lib.mkOption {
         type = types.bool;
         default = true;
         example = false;
         description = ''
           Generate `refind_linux.conf` file next to the kernel.
-        '';
-      };
-      efiInstallAsRemovable = lib.mkEnableOption null // {
-        default = !efi.canTouchEfiVariables;
-        # example = true;
-        defaultText = lib.literalExpression "!config.boot.loader.efi.canTouchEfiVariables";
-        description = ''
-          Whether or not to install the rEFInd EFI files as removable.
-          Use the `--usedefault` option of `refind-install`.
-
-          See {option}`boot.loader.grub.efiInstallAsRemovable`
-        '';
-      };
-      tools = lib.mkOption {
-        default = { };
-        type = types.attrsOf types.path;
-        example = lib.literalExpression ''
-          { "memtest86.efi" = "''${pkgs.memtest86-efi}/BOOTX64.efi"; }
-        '';
-        description = ''
-          A set of files to be copied to `/boot/tools`. Each attribute name denotes the
-          destination file name in `/boot/boot`, while the corresponding attribute value
-          specifies the source file.
-
-          Thoses tools can next be used from refind tools bar.
         '';
       };
     };

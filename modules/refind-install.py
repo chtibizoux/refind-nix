@@ -515,9 +515,16 @@ def install_bootloader() -> None:
             file.flush()
             os.fsync(file.fileno())
 
-    if config["refindConfig"] != None:
+    if config["refindConfig"] != None or config["extraConfig"] != "":
         print("updating refind.conf...")
-        config_file = get_refind_config(config["refindConfig"], profiles)
+
+        if config["refindConfig"] != None:
+            config_file = get_refind_config(config["refindConfig"], profiles)
+        else:
+            config_file = ""
+
+        if config["extraConfig"] != "":
+            config_file += "\n" + config["extraConfig"]
 
         with open(os.path.join(refind_dir, "refind.conf"), "w") as file:
             file.truncate()
@@ -525,9 +532,8 @@ def install_bootloader() -> None:
             file.flush()
             os.fsync(file.fileno())
 
-    tools_dir = os.path.join(config["efiMountPoint"], "efi", "tools")
-    for filename, source_path in config["tools"].items():
-        dest_path = os.path.join(tools_dir, filename)
+    for file_path, source_path in config["additionalFiles"].items():
+        dest_path = os.path.join(config["efiMountPoint"], file_path)
         shutil.copyfile(source_path, dest_path)
 
 
